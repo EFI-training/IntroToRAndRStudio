@@ -67,13 +67,11 @@ document within said project. We will need to follow these steps:
 
 
 ## Traditional setup
-We will be using the following packages for today's workshop
-```{r}
-install.packages("palmerpenguins")
-install.packages("tidyverse")
-install.packages("gt")
-```
+We will be using the following packages for today's workshop:
 
+PalmerPenguins: for the dataset
+Tidyverse: for data tidying (dplyr, tidyr)
+gt: for pretty tables 
 
 ### Checking Installed Packages
 Before running the code above, you can check if you already installed those packages!
@@ -84,13 +82,18 @@ print(requireNamespace("tidyverse", quietly = TRUE))
 print(requireNamespace("gt", quietly = TRUE))
 ```
 
+# Install Packages
+```{r}
+install.packages("palmerpenguins")
+#install.packages("tidyverse")
+#install.packages("gt")
+```
+
 ### Load Packages
 ```{r}
-library(palmerpenguins) # Contains the Palmer Penguin dataset.
-library(tidyverse) # Contains multiple very useful packages for data tidying and visualisation. Essential for almost any project.
-library(gt) # Make pretty tables
-library(dplyr) #installed with tidyverse
-library(tidyr) #installed with tidyverse
+library(palmerpenguins)
+library(tidyverse) 
+library(gt) 
 ```
 
 
@@ -99,7 +102,22 @@ library(tidyr) #installed with tidyverse
 We have our research questions. And we have our learning aims. Lets crack on with the important first step of data analysis: uploading our data!
 
 The Penguins dataset is loaded to your workspace when you run the "library(palmerpenguins)" command. This makes the dataset nice and user friendly to get our head around playing with data. 
-To load the data into your environment, you have multiple options:
+
+## Directly load from the package
+
+```{r}
+# The code below tells us what the palmerpenguins package contains of. For more information: https://allisonhorst.github.io/palmerpenguins/
+data(package = 'palmerpenguins')
+```
+
+```{r}
+penguins
+penguins<-penguins
+mydata<- penguins
+```
+
+
+# Load data from external environment:
 
 Option 1 (Works with .csv documents, slightly quicker):
 Go to `Files`
@@ -113,11 +131,11 @@ From there, click `From Text (readr)...`. (We can also upload excel,SPSS, SAS an
 Option 3:
 ```{r data_upload, echo = FALSE}
 library(readr)
-penguins <- read_csv("penguins.csv")  # We will copy the path directory from the Import Dataset tab, and paste it here.
+penguins <- read_csv("penguins.csv")
 ```
 Option 4
 ```{r}
-penguins <- read_csv(url("https://raw.github.com/DCS-training/IntroToRAndRStudio/main/2024/Data/penguins.csv")) # This is our back-up option. It will take the dataset directly from github, allowing you to follow the materials if there is an issue with importing the data
+penguins <- read_csv(url("https://raw.github.com/EFI-training/IntroToRAndRStudio/main/2026/penguins.csv")) # This is our back-up option. It will take the dataset directly from github, allowing you to follow the materials if there is an issue with importing the data
 
 ```
 
@@ -134,7 +152,7 @@ My top tip for any of you starting your data collection is to use the early stag
 
 Your raw data will remain raw, and so you don't need to worry about accidentally vandalising it. And the ability to save your data means you can instantly use it in any way you like in the future - even if that means using Excel or SPSS to do a step you can't do in R (we won't judge too much...).
 
-It is well worth the investment of time, especially if you are in the early stages of data collection. There is plenty of help online, and you can always get in touch with [CDCS through the data surgery service](https://www.cdcs.ed.ac.uk/training/data-surgery) if you are particularly stuck.
+It is well worth the investment of time, especially if you are in the early stages of data collection. There is plenty of help online, and you can always get in touch with [EFI through the data surgery service](https://www.cdcs.ed.ac.uk/training/data-surgery) if you are particularly stuck.
 
 ### Inspecting our data
 
@@ -173,7 +191,7 @@ names(penguins) # prints the column names
 
 ### Inspect Variable Types
 ```{r}
-class(penguins$species)
+class(penguins$species) # using $ allows us to choose our variable.
 class(penguins$body_mass_g)
 class(penguins$year)
 ```
@@ -191,7 +209,7 @@ table(penguins$sex)
 #### Visual Data Inspection
 
 ```{r}
-hist(penguins$flipper_length_mm) # using $ allows us to choose our variable. Try Changing flipper_length_mm to bill_length_mm, or any other variable from the dataset!
+hist(penguins$flipper_length_mm)
 boxplot(penguins$flipper_length_mm)
 ```
 
@@ -229,7 +247,7 @@ penguins_clean_2<- penguins %>% drop_na(sex) # removes all the rows if there is 
 
 ### Creating new variables: mutate()
 
-Mutate is used to change our variables. Think of it as "Transform variables" from SPSS, but more versatile! We can use a variety of functions within mutate, and even create our own when we get advanced. We can also combine functions, and use newly created variables in new commands. It's such a powerful tool. 
+Mutate is used to change our variables and introducing new variables. Think of it as "Transform variables" from SPSS, but more versatile! We can use a variety of functions within mutate, and even create our own when we get advanced. We can also combine functions, and use newly created variables in new commands. It's such a powerful tool. 
 
 It's also very useful for any researchers working with psychometric measures - as it allows us to create total scores whilst keeping track of our steps within the code.
 
@@ -237,7 +255,7 @@ It's also very useful for any researchers working with psychometric measures - a
 mutate_example <- penguins_clean %>%
   mutate(
     body_mass_kg = body_mass_g/1000, # here we use mutate to convert the units from grams to kilograms 
-    species = as.factor(species), # We can use R to convert our data from character to factor format
+    species = as.factor(species), # We can use R to convert our data from character to factor (categorical) format
     bill.length.mm = bill_length_mm, # we can also use mutate to create a new variable with a different variable name
     flipper_length_Z = scale(flipper_length_mm)  # standardise our data
   )
@@ -312,11 +330,6 @@ head(penguin_islands)
 ```
 
 
-## 10 min Break Time
-
-Grab yourself a coffee, and have a chill. Feel free to ask us any questions during this time!
-
-
 ### Putting it all together using %>%
 
 Whilst we can work iteratively to change our data step by step, we can also combine multiple functions with the pipe `%>%`. 
@@ -379,9 +392,10 @@ our data will be saved to.
 3) I always comment out my code after saving. This extra step helps to prevent accidental overwriting.
 
 Time to run our code and save our data.
+Before running the code, create a new folder called processed_data
 
 ```{r}
-write.csv(tidy_data, file= "prepared_data/tidy_data.csv") # the object you want to save and the path of the file you want to save into
+write.csv(tidy_data, file= "processed_data/tidy_data.csv") # the object you want to save and the path of the file you want to save into
 ```
 
 
@@ -402,7 +416,7 @@ Using penguins_clean
 
 ### Data Visualisation
 
-We appreciate that we are likley to run out of time during this course, as there are so many exciting things to cover. One of them is data visualising (as showcases above). If you want to learn in more depth about using R for data visualisation, please check our [CDCS resources on Good Data Visualisation with R](https://github.com/DCS-training/Good-Data-Visualisation-with-R). 
+We appreciate that we are likley to run out of time during this course, as there are so many exciting things to cover. One of them is data visualising (as showcases above). If you want to learn in more depth about using R for data visualisation, please check our [EFI resources on Good Data Visualisation with R](https://github.com/EFI-training/Good-Data-Visualisation-with-R). 
 
 After preprocessing data,you can try to visualise our analysis to help communicate your data and some summary statistics
 with greater clarity using `ggplot` 
